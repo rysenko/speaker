@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Speaker Test</title>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="index.css"/>
+    <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/angular/angular.min.js"></script>
+    <script type="text/javascript" src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
+<body data-ng-app="main" data-ng-controller="MainController">
+<blockquote>
+    This demo shows joining/leaving remote session and also muting/unmuting attendee microphone.
+</blockquote>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form name="loginForm" class="form-inline">
+            <div class="form-group">
+                <label class="sr-only" for="login">Login</label>
+                <input type="text" class="form-control" id="login" placeholder="Login" required
+                       data-ng-model="login">
+            </div>
+            <div class="form-group">
+                <label class="sr-only" for="pass">Password</label>
+                <input type="password" class="form-control" id="pass" placeholder="Password" required
+                       data-ng-model="password">
+            </div>
+            <button type="submit" class="btn btn-default" data-ng-disabled="loginForm.$invalid"
+                    data-ng-click="join()">Join</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
