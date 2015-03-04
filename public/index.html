@@ -31,6 +31,13 @@
                     data-ng-click="join()">Join</button>
         </form>
     </div>
+    <ul class="list-group">
+        <li class="list-group-item" data-ng-repeat="(id, user) in users">
+            <span class="badge" data-ng-click="toggle(user)"
+                  data-ng-class="user.muted ? 'alert-danger' : 'alert-success'">{{ user.muted ? 'Muted' : 'Active' }}</span>
+            User {{ user.id }}
+        </li>
+    </ul>
 </div>
 </body>
 </html>

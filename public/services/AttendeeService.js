@@ -1,6 +1,7 @@
-module.exports = ['$http', function ($http) {
+module.exports = ['$http', '$rootScope', function ($http, $rootScope) {
     var BACKEND_URL = 'http://107.170.105.13/api/';
     var eventSocket = null;
+    var token = null;
 
     this.join = function (login, password) {
         return $http({
@@ -13,12 +14,20 @@ module.exports = ['$http', function ($http) {
             headers: {'Content-Type': 'application/json'}
         }).then(function (response) {
             var payload = response && response.data && response.data.payload;
+            token = payload && payload.token;
             var wsUrl = payload && payload.rtmUrl;
-            var token = payload && payload.token;
             if (wsUrl && token) {
                 eventSocket = new WebSocket(wsUrl + '/?token=' + token);
                 eventSocket.onmessage = function (event) {
-                    console.log(event.data);
+                    var jsData = null;
+                    try {
+                        jsData = JSON.parse(event.data);
+                    } catch (e) {};
+                    if (jsData) {
+                        $rootScope.$apply(function () {
+                            $rootScope.$broadcast('socketUpdate', jsData);
+                        });
+                    }
                 };
             }
             return payload;
@@ -27,18 +36,24 @@ module.exports = ['$http', function ($http) {
     this.mute = function (userId) {
         return $http({
             method : 'PUT',
-            url    : '/mute/' + userId
+            url    : BACKEND_URL + 'mute/' + userId,
+            data: {
+                token: token
+            },
+            headers: {'Content-Type': 'application/json'}
         }).then(function (response) {
-            //TODO: Handle response status
             return response.data;
         });
     };
     this.unmute = function (userId) {
         return $http({
             method : 'PUT',
-            url    : '/mute/' + userId
+            url    : BACKEND_URL + 'unmute/' + userId,
+            data: {
+                token: token
+            },
+            headers: {'Content-Type': 'application/json'}
         }).then(function (response) {
-            //TODO: Handle response status
             return response.data;
         });
     };

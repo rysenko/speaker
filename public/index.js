@@ -1,3 +1,3 @@
 angular.module('main', [])
-    .service('MicrophoneService', require('./services/MicrophoneService'))
+    .service('AttendeeService', require('./services/AttendeeService'))
     .controller('MainController', require('./controllers/MainController'));
