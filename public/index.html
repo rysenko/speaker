@@ -16,7 +16,7 @@
 </blockquote>
 <div class="panel panel-default">
     <div class="panel-body">
-        <form name="loginForm" class="form-inline">
+        <form data-ng-hide="joined" name="loginForm" class="form-inline">
             <div class="form-group">
                 <label class="sr-only" for="login">Login</label>
                 <input type="text" class="form-control" id="login" placeholder="Login" required
@@ -27,9 +27,10 @@
                 <input type="password" class="form-control" id="pass" placeholder="Password" required
                        data-ng-model="password">
             </div>
-            <button type="submit" class="btn btn-default" data-ng-disabled="loginForm.$invalid"
+            <button type="submit" class="btn btn-default" data-ng-disabled="loginForm.$invalid || loading"
                     data-ng-click="join()">Join</button>
         </form>
+        <button data-ng-show="joined" type="submit" class="btn btn-default" data-ng-click="leave()">Leave</button>
     </div>
     <ul class="list-group">
         <li class="list-group-item" data-ng-repeat="(id, user) in users">
