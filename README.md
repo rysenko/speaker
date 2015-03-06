@@ -10,6 +10,8 @@ UI (simple Angular.js app) is in public. It also includes trivial backend in nod
 
 Sample web UI application is expected to be published with regular Heroku node-stack.
 
+See live at [http://speaker.rysenko.com/](http://speaker.rysenko.com/)
+
 Inconsistencies
 ===
 
