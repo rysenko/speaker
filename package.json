@@ -8,7 +8,8 @@
   },
   "scripts": {
     "postinstall": "./node_modules/bower/bin/bower install",
-    "test": "./node_modules/karma/bin/karma start"
+    "test": "./node_modules/karma/bin/karma start",
+    "start": "node ."
   },
   "devDependencies": {
     "jasmine-core": "^2.2.0",
