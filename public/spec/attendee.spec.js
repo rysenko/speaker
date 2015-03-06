@@ -23,7 +23,7 @@ describe('AttendeeClient', function () {
         this.client.on('muteState', function (user) {
             expect(user).toBeDefined();
             expect(user.muted).toBeTruthy();
-            expect(user.id).toEqual(randomUser.id.toString());
+            expect(user.id).toEqual(randomUser.id);
             done();
         });
         this.client.mute(randomUser.id, function (err, response) {

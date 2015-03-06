@@ -13,6 +13,7 @@
 <body data-ng-app="main" data-ng-controller="MainController">
 <blockquote>
     This demo shows joining/leaving remote session and also muting/unmuting attendee microphone.
+    See <a href="docs/">documentation</a> for client library.
 </blockquote>
 <div class="panel panel-default">
     <div class="panel-body">
@@ -30,6 +31,7 @@
             <button type="submit" class="btn btn-default" data-ng-disabled="loginForm.$invalid || loading"
                     data-ng-click="join()">Join</button>
         </form>
+        <span data-ng-show="joined">Logged in as {{ name }}</span>
         <button data-ng-show="joined" type="submit" class="btn btn-default" data-ng-click="leave()">Leave</button>
     </div>
     <ul class="list-group">

@@ -1,7 +1,16 @@
 /**
- * Taken from https://github.com/component/emitter and modified a bit
+ * This provides methods used for event handling
+ *
+ * @mixin
+ * @module Main
  */
-var Emitter = (function () {
+var Emitter = (/** @lends module:Main */function () {
+    /**
+     *
+     * @param {object} obj Object to mix
+     * @returns {object}
+     * @constructor
+     */
     function Emitter(obj) {
         if (obj) {
             for (var key in Emitter.prototype) {
@@ -10,11 +19,21 @@ var Emitter = (function () {
             return obj;
         }
     };
+    /**
+     * Register a handler function to be called whenever this event is fired
+     * @param {string} event Name of the event
+     * @param {function} fn The handler to call
+     */
     Emitter.prototype.on = function (event, fn) {
         this._callbacks = this._callbacks || {};
         (this._callbacks['$' + event] = this._callbacks['$' + event] || []).push(fn);
         return this;
     };
+    /**
+     * Register a handler function to be called only once
+     * @param {string} event Name of the event
+     * @param {function} fn The handler to call
+     */
     Emitter.prototype.once = function (event, fn) {
         function on() {
             this.off(event, on);
@@ -24,6 +43,11 @@ var Emitter = (function () {
         this.on(event, on);
         return this;
     };
+    /**
+     * Unregister a handler function
+     * @param {string} event Name of the event
+     * @param {function} fn The handler
+     */
     Emitter.prototype.off = function (event, fn) {
         this._callbacks = this._callbacks || {};
         // all
@@ -102,7 +126,7 @@ var JsonRequest = (function (_super) {
                         callback('No response received');
                     }
                 } else {
-                    callback({ status: xhr.status, message: responseObj && responseObj.error || xhr.responseText });
+                    callback(responseObj && responseObj.error || xhr.responseText || ('Error ' + xhr.status));
                 }
             }
         }).bind(this);
@@ -134,7 +158,16 @@ var JsonSocket = (function (_super) {
     return JsonSocket;
 })(JsonConnection);
 
-var AttendeeClient = (function () {
+/**
+ * @module Main
+ */
+var AttendeeClient = (/** @lends module:Main */function () {
+    /**
+     * Client for communicating with API
+     * @param apiUrl {string} API url
+     * @constructor
+     * @mixes module:Main~Emitter
+     */
     function AttendeeClient(apiUrl) {
         Emitter(AttendeeClient.prototype);
         this.apiUrl = apiUrl;
@@ -175,12 +208,22 @@ var AttendeeClient = (function () {
             callback(err, response);
         }).bind(this));
     };
+    /**
+     * Joins remote session as attendee
+     * @param login {string} User login
+     * @param password {string} User password in plain
+     * @param callback {function} Node-style callback
+     * @fires module:Main~AttendeeClient#activeSpeaker
+     */
     AttendeeClient.prototype.join = function (login, password, callback) {
         if (this.token) {
             this.close();
         }
         this._safeRepeat(this._join, login, password, callback);
     };
+    /**
+     * Leaves remote session
+     */
     AttendeeClient.prototype.leave = function () {
         if (this.eventSocket) {
             this.eventSocket.close();
@@ -190,12 +233,24 @@ var AttendeeClient = (function () {
     AttendeeClient.prototype._mute = function (id, callback) {
         new JsonRequest('PUT', this.apiUrl + 'mute/' + id).send({ token: this.token }, callback);
     };
+    /**
+     * Mutes user microphone
+     * @param id {number} User identifier
+     * @param callback {function} Node-style callback
+     * @fires module:Main~AttendeeClient#muteState
+     */
     AttendeeClient.prototype.mute = function (id, callback) {
         this._safeRepeat(this._mute, id, callback);
     };
     AttendeeClient.prototype._unmute = function (id, callback) {
         new JsonRequest('PUT', this.apiUrl + 'unmute/' + id).send({ token: this.token }, callback);
     };
+    /**
+     * Unmutes user microphone
+     * @param id {number} User identifier
+     * @param callback {function} Node-style callback
+     * @fires module:Main~AttendeeClient#muteState
+     */
     AttendeeClient.prototype.unmute = function (id, callback) {
         this._safeRepeat(this._unmute, id, callback);
     };
@@ -203,12 +258,29 @@ var AttendeeClient = (function () {
         var payload = data && data.payload;
         var user = payload && payload.user;
         if (data.name) {
+            user.id = Number(user.id); // id becomes string for muteState event
             if (data.name === 'muteState') {
                 user.muted = payload.muted;
             }
             this.emit(data.name, user);
         }
     };
+    /**
+     * activeSpeaker event
+     *
+     * @event module:Main~AttendeeClient#activeSpeaker
+     * @type {object}
+     * @property {string} id User identifier
+     */
+
+    /**
+     * muteState event
+     *
+     * @event module:Main~AttendeeClient#muteState
+     * @type {object}
+     * @property {string} id User identifier
+     * @property {boolean} muted User muted state
+     */
     return AttendeeClient;
 })();
 
