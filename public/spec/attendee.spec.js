@@ -20,13 +20,26 @@ describe('AttendeeClient', function () {
         }).bind(this));
     });
     it('should mute and receive message', function (done) {
-        this.client.on('muteState', function (user) {
+        this.client.once('muteState', function (user) {
             expect(user).toBeDefined();
             expect(user.muted).toBeTruthy();
             expect(user.id).toEqual(randomUser.id);
             done();
         });
         this.client.mute(randomUser.id, function (err, response) {
+            expect(err).toBeFalsy();
+            expect(response).toBeTruthy();
+            expect(response && response.status).toEqual('ok');
+        });
+    });
+    it('should unmute and receive message', function (done) {
+        this.client.once('muteState', function (user) {
+            expect(user).toBeDefined();
+            expect(user.muted).toBeFalsy();
+            expect(user.id).toEqual(randomUser.id);
+            done();
+        });
+        this.client.unmute(randomUser.id, function (err, response) {
             expect(err).toBeFalsy();
             expect(response).toBeTruthy();
             expect(response && response.status).toEqual('ok');
